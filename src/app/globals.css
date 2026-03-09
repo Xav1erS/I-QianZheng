@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+}
+
+@layer utilities {
+  .flex-2 {
+    flex: 2;
+  }
+}
+
+/* prose 样式覆盖 */
+.prose ul > li::marker {
+  display: none;
+}
+
+/* 打印/PDF 导出优化 */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

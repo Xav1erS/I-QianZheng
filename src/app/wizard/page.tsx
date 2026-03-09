@@ -1,0 +1,156 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import StepIndicator from "@/components/wizard/StepIndicator";
+import Step1Profile from "@/components/wizard/Step1Profile";
+import Step2Background from "@/components/wizard/Step2Background";
+import Step3Intent from "@/components/wizard/Step3Intent";
+import { WizardFormData } from "@/types";
+import { createClient } from "@/lib/supabase/client";
+
+const initialFormData: WizardFormData = {
+  nationality: "中国",
+  targetCountries: [],
+  age: 0,
+  education: "",
+  career: "",
+  income: "",
+  hasSpouse: false,
+  hasChildren: false,
+  purpose: "",
+  budget: "",
+  willInvest: "",
+};
+
+export default function WizardPage() {
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState<WizardFormData>(initialFormData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [credits, setCredits] = useState(3);
+
+  useEffect(() => {
+    const fetchCredits = async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("users")
+        .select("credits")
+        .eq("id", user.id)
+        .single();
+
+      if (data) setCredits(data.credits);
+    };
+    fetchCredits();
+  }, []);
+
+  const handleChange = (updates: Partial<WizardFormData>) => {
+    setFormData((prev) => ({ ...prev, ...updates }));
+  };
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    try {
+      const supabase = createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        toast.error("请先登录后再生成报告");
+        router.push("/auth/login");
+        return;
+      }
+
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        if (response.status === 402) {
+          toast.error("积分不足！每次生成消耗 1 次积分，请联系客服充值。");
+          return;
+        }
+        if (response.status === 401) {
+          toast.error("登录已过期，请重新登录");
+          router.push("/auth/login");
+          return;
+        }
+        const errData = await response.json().catch(() => ({}));
+        toast.error(errData.error || "服务暂时不可用，请稍后再试");
+        return;
+      }
+
+      // 从响应头中获取咨询 ID
+      const consultationId = response.headers.get("X-Consultation-Id");
+      if (!consultationId) {
+        toast.error("生成失败，请重试");
+        return;
+      }
+
+      // 读取流式响应（在后台处理），立即跳转到结果页
+      router.push(`/result/${consultationId}`);
+    } catch {
+      toast.error("网络错误，请检查网络连接后重试");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex min-h-screen bg-gray-50">
+      {/* 左侧步骤进度条 */}
+      <StepIndicator currentStep={currentStep} />
+
+      {/* 右侧表单区域 */}
+      <main className="flex-1 flex flex-col">
+        {/* 移动端步骤提示 */}
+        <div className="md:hidden bg-primary-900 text-white px-4 py-3 flex items-center justify-between">
+          <span className="font-semibold">移·前程</span>
+          <span className="text-primary-300 text-sm">步骤 {currentStep}/3</span>
+        </div>
+
+        <div className="flex-1 flex items-start justify-center p-6 md:p-10">
+          <div className="w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+            {currentStep === 1 && (
+              <Step1Profile
+                data={formData}
+                onChange={handleChange}
+                onNext={() => setCurrentStep(2)}
+              />
+            )}
+            {currentStep === 2 && (
+              <Step2Background
+                data={formData}
+                onChange={handleChange}
+                onNext={() => setCurrentStep(3)}
+                onBack={() => setCurrentStep(1)}
+              />
+            )}
+            {currentStep === 3 && (
+              <Step3Intent
+                data={formData}
+                onChange={handleChange}
+                onSubmit={handleSubmit}
+                onBack={() => setCurrentStep(2)}
+                isLoading={isLoading}
+                credits={credits}
+              />
+            )}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
