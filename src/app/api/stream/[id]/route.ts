@@ -3,7 +3,7 @@ import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/prompts";
 import { WizardFormData } from "@/types";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 export const maxDuration = 60;
 
 const KIMI_BASE_URL = "https://api.moonshot.cn/v1";
