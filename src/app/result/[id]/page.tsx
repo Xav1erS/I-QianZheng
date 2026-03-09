@@ -104,7 +104,7 @@ export default function ResultPage() {
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* 操作栏 */}
-        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <div className="no-print flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>
             <Link
               href="/history"
@@ -168,7 +168,7 @@ export default function ResultPage() {
 
         {/* 底部操作 */}
         {!isStreaming && streamedContent && (
-          <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="no-print mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-gray-400 text-sm text-center">
               💡 如需专业帮助，请咨询持牌移民律师
             </p>
