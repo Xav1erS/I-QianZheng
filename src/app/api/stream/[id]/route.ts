@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 const KIMI_BASE_URL = "https://api.moonshot.cn/v1";
-const KIMI_MODEL = process.env.KIMI_MODEL || "moonshot-v1-32k";
+const KIMI_MODEL = process.env.KIMI_MODEL || "moonshot-v1-8k";
 
 export async function GET(
   request: NextRequest,
@@ -61,6 +61,11 @@ export async function GET(
     }
 
     // 5. 调用 Kimi API（流式）
+    if (!process.env.KIMI_API_KEY) {
+      console.error("KIMI_API_KEY 未配置");
+      return NextResponse.json({ error: "AI 服务未配置，请联系管理员" }, { status: 500 });
+    }
+
     const formData = consultation.input_data as WizardFormData;
     const kimiResponse = await fetch(KIMI_BASE_URL + "/chat/completions", {
       method: "POST",
@@ -70,7 +75,7 @@ export async function GET(
       },
       body: JSON.stringify({
         model: KIMI_MODEL,
-        max_tokens: 4096,
+        max_tokens: 2048,
         stream: true,
         messages: [
           { role: "system", content: buildSystemPrompt() },
@@ -156,8 +161,8 @@ export async function GET(
     return new Response(stream, {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-cache",
-        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-cache, no-transform",
+        "X-Accel-Buffering": "no",
       },
     });
   } catch (err) {
