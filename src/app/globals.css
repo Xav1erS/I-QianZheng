@@ -7,10 +7,31 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
       Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
   }
 
   body {
     @apply bg-gray-50 text-gray-900;
+  }
+
+  /* 统一 select 样式：去掉原生箭头，加自定义 chevron */
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+  }
+
+  /* 去掉 number input 的上下箭头 */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
   }
 }
 

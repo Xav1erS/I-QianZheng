@@ -113,10 +113,21 @@ export default function WizardPage() {
 
       {/* 右侧表单区域 */}
       <main className="flex-1 flex flex-col">
-        {/* 移动端步骤提示 */}
-        <div className="md:hidden bg-primary-900 text-white px-4 py-3 flex items-center justify-between">
-          <span className="font-semibold">问签</span>
-          <span className="text-primary-300 text-sm">步骤 {currentStep}/3</span>
+        {/* 移动端进度条 */}
+        <div className="md:hidden bg-primary-900 text-white px-4 pt-3 pb-2">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-semibold text-sm">问签</span>
+            <span className="text-primary-300 text-xs">第 {currentStep} 步 / 共 3 步</span>
+          </div>
+          <div className="w-full bg-primary-700 rounded-full h-1.5">
+            <div
+              className="bg-accent-500 h-1.5 rounded-full transition-all duration-500"
+              style={{ width: `${Math.round((currentStep / 3) * 100)}%` }}
+            />
+          </div>
+          <p className="text-primary-400 text-xs mt-1.5">
+            {currentStep === 1 ? "用户画像" : currentStep === 2 ? "职业背景" : "移民意向"}
+          </p>
         </div>
 
         <div className="flex-1 flex items-start justify-center p-6 md:p-10">

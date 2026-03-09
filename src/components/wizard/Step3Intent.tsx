@@ -127,23 +127,21 @@ export default function Step3Intent({
         </div>
       </div>
 
-      {/* 积分提示 */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-start gap-3">
-          <span className="text-blue-600 text-lg">💡</span>
-          <div>
-            <p className="text-blue-800 font-medium text-sm">生成报告说明</p>
-            <p className="text-blue-600 text-sm mt-1">
-              点击生成将消耗 1 次积分（当前剩余：
-              <span className="font-bold">{credits}</span> 次）。
-              AI 将分析您的信息并生成个性化的签证路径评估报告。
-            </p>
-          </div>
+      {/* 积分状态 + 操作按钮 */}
+      {credits <= 0 ? (
+        <div className="flex items-center gap-2 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          积分已用完，暂时无法生成报告
         </div>
-      </div>
+      ) : (
+        <p className="text-gray-400 text-xs text-right">
+          本次消耗 1 次积分 · 剩余 <span className="font-semibold text-gray-600">{credits}</span> 次
+        </p>
+      )}
 
-      {/* 操作按钮 */}
-      <div className="flex gap-3 pt-4">
+      <div className="flex gap-3">
         <button
           onClick={onBack}
           disabled={isLoading}
@@ -154,7 +152,7 @@ export default function Step3Intent({
         <button
           onClick={onSubmit}
           disabled={!isValid || isLoading || credits <= 0}
-          className="flex-grow-[2] flex-[2] py-4 px-6 bg-accent-500 hover:bg-accent-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2"
+          className="flex-[2] py-4 px-6 bg-accent-500 hover:bg-accent-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2"
         >
           {isLoading ? (
             <>
