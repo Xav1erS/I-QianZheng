@@ -88,7 +88,7 @@ export async function GET(
       const errText = await kimiResponse.text();
       console.error("Kimi API 错误:", kimiResponse.status, errText);
       return NextResponse.json(
-        { error: "AI 服务暂时不可用，请稍后重试" },
+        { error: `Kimi API 错误 ${kimiResponse.status}: ${errText}` },
         { status: 500 }
       );
     }
