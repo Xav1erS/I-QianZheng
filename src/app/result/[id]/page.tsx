@@ -22,39 +22,6 @@ export default function ResultPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const pollForResult = (
-      supabase: ReturnType<typeof createClient>,
-      userId: string
-    ) => {
-      const maxAttempts = 60;
-      let attempts = 0;
-
-      const poll = async () => {
-        attempts++;
-        const { data } = await supabase
-          .from("consultations")
-          .select("ai_response")
-          .eq("id", id)
-          .eq("user_id", userId)
-          .single();
-
-        if (data?.ai_response) {
-          setStreamedContent(data.ai_response);
-          setIsStreaming(false);
-          return;
-        }
-
-        if (attempts < maxAttempts) {
-          setTimeout(poll, 1000);
-        } else {
-          setIsStreaming(false);
-          toast.error("AI 生成超时，请刷新页面重试");
-        }
-      };
-
-      poll();
-    };
-
     const loadResult = async () => {
       const supabase = createClient();
       const {
@@ -80,16 +47,40 @@ export default function ResultPage() {
       }
 
       setConsultation(data as Consultation);
+      setIsLoading(false);
 
+      // 已有 AI 响应，直接显示
       if (data.ai_response) {
         setStreamedContent(data.ai_response);
-        setIsLoading(false);
         return;
       }
 
-      setIsLoading(false);
+      // 调用流式端点，实时显示 AI 生成内容
       setIsStreaming(true);
-      pollForResult(supabase, user.id);
+      try {
+        const response = await fetch(`/api/stream/${id}`);
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          toast.error(errData.error || "AI 生成失败，请重试");
+          setIsStreaming(false);
+          return;
+        }
+
+        const reader = response.body!.getReader();
+        const decoder = new TextDecoder();
+        let content = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          content += decoder.decode(value, { stream: true });
+          setStreamedContent(content);
+        }
+      } catch {
+        toast.error("网络错误，请刷新页面重试");
+      } finally {
+        setIsStreaming(false);
+      }
     };
 
     loadResult();

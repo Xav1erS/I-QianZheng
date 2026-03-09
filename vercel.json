@@ -3,7 +3,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "functions": {
-    "src/app/api/analyze/route.ts": {
+    "src/app/api/stream/[id]/route.ts": {
       "maxDuration": 60
     }
   }

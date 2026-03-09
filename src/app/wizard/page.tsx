@@ -92,14 +92,12 @@ export default function WizardPage() {
         return;
       }
 
-      // 从响应头中获取咨询 ID
-      const consultationId = response.headers.get("X-Consultation-Id");
+      const { id: consultationId } = await response.json();
       if (!consultationId) {
         toast.error("生成失败，请重试");
         return;
       }
 
-      // 读取流式响应（在后台处理），立即跳转到结果页
       router.push(`/result/${consultationId}`);
     } catch {
       toast.error("网络错误，请检查网络连接后重试");
