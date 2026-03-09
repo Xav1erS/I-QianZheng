@@ -7,7 +7,7 @@ export const runtime = "edge";
 export const maxDuration = 60;
 
 const KIMI_BASE_URL = "https://api.moonshot.cn/v1";
-const KIMI_MODEL = process.env.KIMI_MODEL || "moonshot-v1-8k";
+const KIMI_MODEL = process.env.KIMI_MODEL || "kimi-k2.5";
 
 export async function GET(
   request: NextRequest,
