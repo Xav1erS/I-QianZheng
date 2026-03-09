@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [credits, setCredits] = useState<number | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,10 +39,16 @@ export default function Navbar() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       if (!session?.user) setCredits(null);
+      else fetchUser();
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // 路由变化时关闭移动菜单
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -52,17 +59,24 @@ export default function Navbar() {
     router.refresh();
   };
 
+  const navLinkClass = (href: string) =>
+    `text-sm font-medium transition ${
+      pathname === href
+        ? "text-white"
+        : "text-primary-300 hover:text-white"
+    }`;
+
   return (
     <header className="bg-primary-900 text-white sticky top-0 z-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 font-bold text-xl hover:text-primary-200 transition"
+          className="flex items-center gap-2 hover:opacity-90 transition"
         >
-          <span>移·前程</span>
+          <span className="font-bold text-xl tracking-tight">问签</span>
           <span className="hidden sm:inline text-primary-400 text-sm font-normal">
-            AI 签证顾问
+            你的 AI 签证顾问
           </span>
         </Link>
 
@@ -70,37 +84,34 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-6">
           {user ? (
             <>
-              <Link
-                href="/wizard"
-                className="text-primary-200 hover:text-white transition text-sm font-medium"
-              >
+              <Link href="/wizard" className={navLinkClass("/wizard")}>
                 开始评估
               </Link>
-              <Link
-                href="/history"
-                className="text-primary-200 hover:text-white transition text-sm font-medium"
-              >
+              <Link href="/history" className={navLinkClass("/history")}>
                 我的报告
               </Link>
               {credits !== null && (
-                <span className="bg-primary-700 text-primary-200 px-3 py-1 rounded-full text-xs">
-                  剩余 <span className="text-white font-bold">{credits}</span>{" "}
-                  次
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    credits === 0
+                      ? "bg-red-900/50 text-red-300"
+                      : "bg-primary-700 text-primary-200"
+                  }`}
+                >
+                  剩余{" "}
+                  <span className="text-white font-bold">{credits}</span> 次
                 </span>
               )}
               <button
                 onClick={handleLogout}
-                className="text-primary-300 hover:text-white transition text-sm"
+                className="text-primary-400 hover:text-white transition text-sm"
               >
                 退出
               </button>
             </>
           ) : (
             <>
-              <Link
-                href="/auth/login"
-                className="text-primary-200 hover:text-white transition text-sm font-medium"
-              >
+              <Link href="/auth/login" className={navLinkClass("/auth/login")}>
                 登录
               </Link>
               <Link
@@ -115,12 +126,13 @@ export default function Navbar() {
 
         {/* 移动端菜单按钮 */}
         <button
-          className="md:hidden p-2"
+          className="md:hidden p-2 rounded-lg hover:bg-primary-800 transition"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label="菜单"
+          aria-label={isMenuOpen ? "关闭菜单" : "打开菜单"}
+          aria-expanded={isMenuOpen}
         >
           <svg
-            className="w-6 h-6"
+            className="w-6 h-6 transition-transform duration-200"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -145,35 +157,39 @@ export default function Navbar() {
       </div>
 
       {/* 移动端菜单 */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-primary-800 border-t border-primary-700 px-4 py-3 space-y-2">
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-200 ease-in-out ${
+          isMenuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="bg-primary-800 border-t border-primary-700 px-4 py-3 space-y-1">
           {user ? (
             <>
               {credits !== null && (
-                <p className="text-primary-300 text-sm py-2">
-                  剩余积分：<span className="text-white font-bold">{credits}</span> 次
+                <p
+                  className={`text-sm py-2 px-2 ${
+                    credits === 0 ? "text-red-300" : "text-primary-300"
+                  }`}
+                >
+                  剩余积分：
+                  <span className="text-white font-bold">{credits}</span> 次
                 </p>
               )}
               <Link
                 href="/wizard"
-                className="block py-2 text-primary-200 hover:text-white transition"
-                onClick={() => setIsMenuOpen(false)}
+                className="block py-2 px-2 rounded-lg text-primary-200 hover:text-white hover:bg-primary-700 transition"
               >
                 开始评估
               </Link>
               <Link
                 href="/history"
-                className="block py-2 text-primary-200 hover:text-white transition"
-                onClick={() => setIsMenuOpen(false)}
+                className="block py-2 px-2 rounded-lg text-primary-200 hover:text-white hover:bg-primary-700 transition"
               >
                 我的报告
               </Link>
               <button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  handleLogout();
-                }}
-                className="block py-2 text-primary-400 hover:text-white transition w-full text-left"
+                onClick={handleLogout}
+                className="block w-full text-left py-2 px-2 rounded-lg text-primary-400 hover:text-white hover:bg-primary-700 transition"
               >
                 退出登录
               </button>
@@ -182,22 +198,20 @@ export default function Navbar() {
             <>
               <Link
                 href="/auth/login"
-                className="block py-2 text-primary-200 hover:text-white transition"
-                onClick={() => setIsMenuOpen(false)}
+                className="block py-2 px-2 rounded-lg text-primary-200 hover:text-white hover:bg-primary-700 transition"
               >
                 登录
               </Link>
               <Link
-                href="/auth/login"
-                className="block py-2 text-accent-400 hover:text-accent-300 font-semibold transition"
-                onClick={() => setIsMenuOpen(false)}
+                href="/auth/login?mode=signup"
+                className="block py-2 px-2 rounded-lg text-accent-400 hover:text-accent-300 font-semibold transition"
               >
                 免费注册（赠 3 次）
               </Link>
             </>
           )}
         </div>
-      )}
+      </div>
     </header>
   );
 }

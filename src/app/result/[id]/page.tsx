@@ -76,6 +76,7 @@ export default function ResultPage() {
           content += decoder.decode(value, { stream: true });
           setStreamedContent(content);
         }
+        toast.success("报告生成完毕！");
       } catch {
         toast.error("网络错误，请刷新页面重试");
       } finally {
@@ -135,6 +136,14 @@ export default function ResultPage() {
             </div>
           )}
         </div>
+
+        {/* 生成中状态条 */}
+        {isStreaming && (
+          <div className="mb-4 flex items-center gap-3 px-4 py-3 bg-primary-50 border border-primary-200 rounded-xl text-primary-700 text-sm">
+            <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+            <span>AI 正在生成报告，请耐心等待，通常需要 30–60 秒...</span>
+          </div>
+        )}
 
         {/* 报告内容 */}
         <div

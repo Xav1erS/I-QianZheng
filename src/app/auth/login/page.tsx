@@ -121,8 +121,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <h1 className="text-3xl font-bold text-white">移·前程</h1>
-            <p className="text-primary-300 text-sm mt-1">AI 签证路径评估平台</p>
+            <h1 className="text-3xl font-bold text-white">问签</h1>
+            <p className="text-primary-300 text-sm mt-1">你的 AI 签证顾问</p>
           </Link>
         </div>
         <Suspense fallback={<div className="bg-white rounded-2xl p-8 text-center text-gray-400">加载中...</div>}>

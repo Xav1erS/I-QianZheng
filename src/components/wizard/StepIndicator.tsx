@@ -20,8 +20,8 @@ export default function StepIndicator({ currentStep }: StepIndicatorProps) {
   return (
     <div className="hidden md:flex flex-col w-64 bg-primary-900 text-white p-6 min-h-screen">
       <div className="mb-8">
-        <h1 className="text-xl font-bold text-white">移·前程</h1>
-        <p className="text-primary-200 text-sm mt-1">AI 签证路径评估</p>
+        <h1 className="text-xl font-bold text-white">问签</h1>
+        <p className="text-primary-200 text-sm mt-1">你的 AI 签证顾问</p>
       </div>
 
       <nav className="flex-1">

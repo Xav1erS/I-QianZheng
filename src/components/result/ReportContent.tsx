@@ -12,6 +12,16 @@ export default function ReportContent({
   content,
   isStreaming = false,
 }: ReportContentProps) {
+  // 流式生成期间用纯文本显示，避免不完整 markdown 块渲染异常
+  if (isStreaming) {
+    return (
+      <div className="text-gray-700 leading-relaxed whitespace-pre-wrap font-sans text-base">
+        {content}
+        <span className="inline-block w-2 h-5 bg-primary-600 animate-pulse ml-0.5 align-middle rounded-sm" />
+      </div>
+    );
+  }
+
   return (
     <div className="prose prose-slate max-w-none">
       <ReactMarkdown
@@ -71,9 +81,6 @@ export default function ReportContent({
       >
         {content}
       </ReactMarkdown>
-      {isStreaming && (
-        <span className="inline-block w-2 h-5 bg-primary-600 animate-pulse ml-1 align-middle" />
-      )}
     </div>
   );
 }

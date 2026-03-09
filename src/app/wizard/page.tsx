@@ -115,7 +115,7 @@ export default function WizardPage() {
       <main className="flex-1 flex flex-col">
         {/* 移动端步骤提示 */}
         <div className="md:hidden bg-primary-900 text-white px-4 py-3 flex items-center justify-between">
-          <span className="font-semibold">移·前程</span>
+          <span className="font-semibold">问签</span>
           <span className="text-primary-300 text-sm">步骤 {currentStep}/3</span>
         </div>
 
