@@ -81,3 +81,47 @@ export function buildUserPrompt(data: WizardFormData): string {
 
 （根据用户的具体情况，给出 2-3 条实用的行动建议）`;
 }
+
+export function buildUserPromptBrief(data: WizardFormData): string {
+  const targetCountriesStr = data.targetCountries.join("、");
+  const spouseStr = data.hasSpouse ? "有配偶" : "无配偶";
+  const childrenStr = data.hasChildren ? "有子女" : "无子女";
+
+  return `请根据以下用户信息，简要分析最适合的移民签证路径：
+
+【基本信息】
+- 国籍：${data.nationality}
+- 目标移民国家/地区：${targetCountriesStr}
+- 年龄：${data.age} 岁
+- 最高学历：${data.education}
+
+【职业与经济背景】
+- 职业领域：${data.career}
+- 年收入范围（人民币）：${data.income}
+- 家庭状况：${spouseStr}，${childrenStr}
+
+【移民意向】
+- 主要目的：${data.purpose}
+- 可用预算（人民币）：${data.budget}
+- 是否考虑投资移民：${data.willInvest}
+
+请按以下格式输出分析报告（内容简明扼要，每项不超过 2-3 句）：
+
+## 🔴 风险提示
+
+（一句话免责声明，提醒用户 AI 内容仅供参考，重大决策请咨询持牌移民律师）
+
+## ✅ 推荐签证路径
+
+（列出 1-3 个最适合的签证类型）
+
+### 路径一：（签证名称）
+
+- **适用原因**：（为何适合该申请人）
+- **核心优势**：（该签证的主要吸引点）
+- **匹配度**：xx%（根据申请人背景综合评估）
+
+## 💡 个性化建议
+
+（2 条最重要的行动建议）`;
+}

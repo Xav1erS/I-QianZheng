@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
-import { buildSystemPrompt, buildUserPrompt } from "@/lib/prompts";
+import { buildSystemPrompt, buildUserPromptBrief } from "@/lib/prompts";
 import { WizardFormData } from "@/types";
 
 export const runtime = "nodejs";
@@ -79,7 +79,7 @@ export async function GET(
         stream: true,
         messages: [
           { role: "system", content: buildSystemPrompt() },
-          { role: "user", content: buildUserPrompt(formData) },
+          { role: "user", content: buildUserPromptBrief(formData) },
         ],
       }),
     });
