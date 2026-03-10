@@ -71,7 +71,7 @@ export function buildUserPrompt(data: WizardFormData): string {
 
 ## 💰 费用预估
 
-（列出官方申请费 + 建议预留的律师/中介费参考范围，注明均为估算）
+（用 Markdown 表格列出各签证路径的官方申请费和律师/中介费参考范围，注明均为估算。严禁使用 HTML 标签，所有换行请使用 Markdown 表格或列表格式）
 
 ## ⏳ 预计时间线
 
