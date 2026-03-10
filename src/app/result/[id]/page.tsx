@@ -6,6 +6,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import DisclaimerBanner from "@/components/result/DisclaimerBanner";
 import ReportContent from "@/components/result/ReportContent";
+import ReportSummaryCards from "@/components/result/ReportSummaryCards";
 import CopyButton from "@/components/result/CopyButton";
 import ExportPDFButton from "@/components/result/ExportPDFButton";
 import { createClient } from "@/lib/supabase/client";
@@ -143,6 +144,11 @@ export default function ResultPage() {
             <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin flex-shrink-0" />
             <span>AI 正在生成报告，请耐心等待，通常需要 30–60 秒...</span>
           </div>
+        )}
+
+        {/* 指标摘要卡片（AI 生成完成后显示） */}
+        {!isStreaming && streamedContent && (
+          <ReportSummaryCards content={streamedContent} />
         )}
 
         {/* 报告内容 */}

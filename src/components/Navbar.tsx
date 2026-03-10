@@ -66,6 +66,9 @@ export default function Navbar() {
         : "text-primary-300 hover:text-white"
     }`;
 
+  // 登录/注册页有自己的品牌区块，不需要全局 Navbar
+  if (pathname.startsWith("/auth")) return null;
+
   return (
     <header className="bg-primary-900 text-white sticky top-0 z-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
