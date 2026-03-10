@@ -74,7 +74,7 @@ export default function Navbar() {
           </div>
           <div className="leading-none">
             <span className="font-bold text-gray-900 text-lg block">问签</span>
-            <span className="hidden sm:block text-gray-400 text-xs mt-0.5">AI 签证顾问</span>
+            <span className="text-gray-400 text-xs mt-0.5">AI 签证顾问</span>
           </div>
         </Link>
 
@@ -194,7 +194,7 @@ export default function Navbar() {
                 登录
               </Link>
               <Link href="/auth/login?mode=signup" className="block py-2.5 px-3 rounded-lg bg-primary-600 text-white hover:bg-primary-700 font-semibold transition text-sm">
-                免费注册（赠 3 次）
+                免费注册（赠 10 次）
               </Link>
             </>
           )}
