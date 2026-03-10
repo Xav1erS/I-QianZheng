@@ -27,8 +27,8 @@ export default function HomePage() {
             <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight">
               移民签证路径
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-400 to-accent-300">
-                AI 帮你看清楚
+              <span className="text-accent-400">
+                AI 深度分析，助您精准规划
               </span>
             </h1>
 
@@ -49,14 +49,14 @@ export default function HomePage() {
             </div>
 
             <p className="text-primary-500 text-sm">
-              注册即赠 3 次评估 · 无需信用卡 · AI 内容仅供参考，不构成法律建议
+              注册即赠 3 次评估 · AI 内容仅供参考，不构成法律建议
             </p>
           </div>
 
           {/* 修复2：统计数据换成用户更有感知的信息 */}
           <div className="mt-20 grid grid-cols-3 gap-4 md:gap-8 max-w-2xl mx-auto border-t border-white/10 pt-10">
             {[
-              { num: "¥0", label: "免费开始，无需信用卡" },
+              { num: "¥0", label: "免费开始，注册即用" },
               { num: "3 min", label: "填写完成所需时间" },
               { num: "即时", label: "AI 报告生成" },
             ].map((stat) => (
