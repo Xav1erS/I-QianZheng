@@ -116,7 +116,7 @@ export default function WizardPage() {
         {/* 移动端进度条 */}
         <div className="md:hidden bg-primary-900 text-white px-4 pt-3 pb-2">
           <div className="flex items-center justify-between mb-2">
-            <span className="font-semibold text-sm">问签</span>
+            <span className="text-primary-300 text-xs font-medium">评估进度</span>
             <span className="text-primary-300 text-xs">第 {currentStep} 步 / 共 3 步</span>
           </div>
           <div className="w-full bg-primary-700 rounded-full h-1.5">

@@ -107,7 +107,7 @@ export default async function HistoryPage() {
           {records.map((record) => {
             const inputData = record.input_data;
             const targetCountries = inputData?.targetCountries || [];
-            const hasResponse = !!record.ai_response;
+            const status = record.status ?? (record.ai_response ? "completed" : "pending");
             const absoluteDate = new Date(record.created_at).toLocaleString("zh-CN");
 
             return (
@@ -126,15 +126,27 @@ export default async function HistoryPage() {
                 {/* 主要内容（可点击区域） */}
                 <Link href={`/result/${record.id}`} className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                    {record.visa_type && (
+                    {record.visa_type && status === "completed" && (
                       <span className="px-2 py-0.5 bg-primary-100 text-primary-700 rounded-full text-xs font-medium">
                         {record.visa_type}
                       </span>
                     )}
-                    {!hasResponse && (
+                    {status === "pending" && (
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs">
                         <span className="w-2.5 h-2.5 border border-yellow-600 border-t-transparent rounded-full animate-spin" />
                         生成中
+                      </span>
+                    )}
+                    {status === "completed" && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                        已生成
+                      </span>
+                    )}
+                    {status === "failed" && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-medium">
+                        <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
+                        生成失败
                       </span>
                     )}
                   </div>

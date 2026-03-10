@@ -18,6 +18,9 @@ export interface WizardFormData {
   willInvest: string;
 }
 
+// 咨询记录状态
+export type ConsultationStatus = "pending" | "completed" | "failed";
+
 // 咨询记录类型
 export interface Consultation {
   id: string;
@@ -25,6 +28,7 @@ export interface Consultation {
   input_data: WizardFormData;
   ai_response: string | null;
   visa_type: string | null;
+  status: ConsultationStatus;
   created_at: string;
 }
 

@@ -84,17 +84,21 @@ export async function GET(
       }),
     });
 
+    // 6. 将 Kimi 的 SSE 流转发给前端，完成后保存并扣积分
+    const adminSupabase = createAdminClient();
+
     if (!kimiResponse.ok) {
       const errText = await kimiResponse.text();
       console.error("Kimi API 错误:", kimiResponse.status, errText);
+      await adminSupabase
+        .from("consultations")
+        .update({ status: "failed" })
+        .eq("id", consultationId);
       return NextResponse.json(
-        { error: `Kimi API 错误 ${kimiResponse.status}: ${errText}` },
+        { error: `AI 服务暂时不可用，请稍后重试` },
         { status: 500 }
       );
     }
-
-    // 6. 将 Kimi 的 SSE 流转发给前端，完成后保存并扣积分
-    const adminSupabase = createAdminClient();
     const encoder = new TextEncoder();
     let fullResponse = "";
 
@@ -140,6 +144,7 @@ export async function GET(
                 .update({
                   ai_response: fullResponse,
                   visa_type: extractVisaType(fullResponse),
+                  status: "completed",
                 })
                 .eq("id", consultationId),
 
@@ -148,11 +153,21 @@ export async function GET(
                 .update({ credits: userProfile.credits - 1 })
                 .eq("id", user.id),
             ]);
+          } else {
+            // 流结束但内容为空，标记为失败
+            await adminSupabase
+              .from("consultations")
+              .update({ status: "failed" })
+              .eq("id", consultationId);
           }
 
           controller.close();
         } catch (err) {
           console.error("AI 流式处理错误:", err);
+          await adminSupabase
+            .from("consultations")
+            .update({ status: "failed" })
+            .eq("id", consultationId);
           controller.error(err);
         }
       },

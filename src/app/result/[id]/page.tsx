@@ -21,6 +21,25 @@ export default function ResultPage() {
   const [streamedContent, setStreamedContent] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [elapsed, setElapsed] = useState(0);
+
+  // 计时器：仅在 streaming 且尚无内容时运行
+  useEffect(() => {
+    if (!isStreaming || streamedContent) {
+      setElapsed(0);
+      return;
+    }
+    const timer = setInterval(() => setElapsed((s) => s + 1), 1000);
+    return () => clearInterval(timer);
+  }, [isStreaming, streamedContent]);
+
+  const streamingPhase = elapsed < 8
+    ? "AI 正在读取您的信息..."
+    : elapsed < 20
+    ? "AI 正在分析签证路径..."
+    : elapsed < 40
+    ? "AI 正在生成完整方案..."
+    : "即将完成，请继续等待...";
 
   useEffect(() => {
     const loadResult = async () => {
@@ -53,6 +72,11 @@ export default function ResultPage() {
       // 已有 AI 响应，直接显示
       if (data.ai_response) {
         setStreamedContent(data.ai_response);
+        return;
+      }
+
+      // 已标记为失败，不再发起请求
+      if (data.status === "failed") {
         return;
       }
 
@@ -138,11 +162,11 @@ export default function ResultPage() {
           )}
         </div>
 
-        {/* 生成中状态条 */}
-        {isStreaming && (
-          <div className="mb-4 flex items-center gap-3 px-4 py-3 bg-primary-50 border border-primary-200 rounded-xl text-primary-700 text-sm">
-            <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-            <span>AI 正在生成报告，请耐心等待，通常需要 30–60 秒...</span>
+        {/* 生成中：顶部轻提示（有内容时才显示，避免和内容区重复） */}
+        {isStreaming && streamedContent && (
+          <div className="mb-4 flex items-center gap-2 px-4 py-2.5 bg-primary-50 border border-primary-100 rounded-xl text-primary-600 text-sm">
+            <div className="w-3.5 h-3.5 border-2 border-primary-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+            <span>AI 正在继续生成，请勿关闭页面...</span>
           </div>
         )}
 
@@ -157,9 +181,34 @@ export default function ResultPage() {
           className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8"
         >
           {isStreaming && !streamedContent && (
-            <div className="flex items-center gap-3 text-gray-500 py-8">
-              <div className="w-5 h-5 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
-              <p>AI 正在分析您的信息，请稍候...</p>
+            <div className="flex flex-col items-center justify-center py-16 gap-6">
+              {/* 主 spinner */}
+              <div className="relative w-16 h-16">
+                <div className="absolute inset-0 rounded-full border-4 border-primary-100" />
+                <div className="absolute inset-0 rounded-full border-4 border-primary-600 border-t-transparent animate-spin" />
+              </div>
+
+              {/* 阶段描述 */}
+              <div className="text-center">
+                <p className="text-gray-800 font-medium text-base mb-1">{streamingPhase}</p>
+                <p className="text-gray-400 text-sm">通常需要 30–60 秒，请耐心等待</p>
+              </div>
+
+              {/* 计时 + 进度条 */}
+              <div className="w-full max-w-xs">
+                <div className="flex justify-between text-xs text-gray-400 mb-1.5">
+                  <span>已等待 {elapsed} 秒</span>
+                  <span>预计约 60 秒</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                  <div
+                    className="bg-primary-500 h-1.5 rounded-full transition-all duration-1000"
+                    style={{ width: `${Math.min((elapsed / 60) * 100, 92)}%` }}
+                  />
+                </div>
+              </div>
+
+              <p className="text-xs text-gray-300">请勿关闭或刷新页面</p>
             </div>
           )}
 
@@ -168,12 +217,36 @@ export default function ResultPage() {
               content={streamedContent}
               isStreaming={isStreaming}
             />
+          ) : consultation?.status === "failed" ? (
+            <div className="text-center py-16">
+              <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">报告生成失败</h3>
+              <p className="text-gray-500 text-sm mb-6">AI 服务未能正常返回内容，您的积分未被扣除</p>
+              <div className="flex items-center justify-center gap-3">
+                <Link
+                  href="/history"
+                  className="px-5 py-2.5 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition text-sm"
+                >
+                  返回列表
+                </Link>
+                <Link
+                  href="/wizard"
+                  className="px-5 py-2.5 bg-accent-500 hover:bg-accent-600 text-white font-semibold rounded-lg transition text-sm"
+                >
+                  重新评估
+                </Link>
+              </div>
+            </div>
           ) : !isStreaming ? (
             <div className="text-center py-12">
-              <p className="text-gray-500">报告内容为空，请</p>
+              <p className="text-gray-500 mb-4">报告内容为空</p>
               <button
                 onClick={() => router.push("/wizard")}
-                className="mt-4 px-6 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 transition"
+                className="px-6 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 transition"
               >
                 重新生成报告
               </button>

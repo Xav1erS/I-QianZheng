@@ -65,6 +65,7 @@ export async function POST(request: NextRequest) {
         input_data: formData,
         ai_response: null,
         visa_type: null,
+        status: "pending",
       })
       .select("id")
       .single();
