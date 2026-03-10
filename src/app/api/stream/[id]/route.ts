@@ -75,7 +75,7 @@ export async function GET(
       },
       body: JSON.stringify({
         model: KIMI_MODEL,
-        max_tokens: 2048,
+        max_tokens: 4096,
         stream: true,
         messages: [
           { role: "system", content: buildSystemPrompt() },
