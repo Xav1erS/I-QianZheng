@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
-import { buildSystemPrompt, buildUserPromptBrief } from "@/lib/prompts";
+import { buildSystemPrompt, buildUserPrompt, buildUserPromptBrief } from "@/lib/prompts";
 import { WizardFormData } from "@/types";
 
 export const runtime = "nodejs";
@@ -66,7 +66,13 @@ export async function GET(
       return NextResponse.json({ error: "AI 服务未配置，请联系管理员" }, { status: 500 });
     }
 
-    const formData = consultation.input_data as WizardFormData;
+    const inputData = consultation.input_data as WizardFormData & { tier?: string };
+    const { tier, ...formData } = inputData;
+    const userPrompt =
+      tier === "detailed"
+        ? buildUserPrompt(formData as WizardFormData)
+        : buildUserPromptBrief(formData as WizardFormData);
+
     const kimiResponse = await fetch(KIMI_BASE_URL + "/chat/completions", {
       method: "POST",
       headers: {
@@ -79,7 +85,7 @@ export async function GET(
         stream: true,
         messages: [
           { role: "system", content: buildSystemPrompt() },
-          { role: "user", content: buildUserPromptBrief(formData) },
+          { role: "user", content: userPrompt },
         ],
       }),
     });

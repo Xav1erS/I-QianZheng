@@ -37,7 +37,17 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. 解析请求体
-    const formData: WizardFormData = await request.json();
+    const body = await request.json();
+    const { tier, ...formData } = body as WizardFormData & { tier?: string };
+    const reportTier = tier === "detailed" ? "detailed" : "brief";
+    const creditCost = reportTier === "detailed" ? 3 : 1;
+
+    if (userProfile.credits < creditCost) {
+      return NextResponse.json(
+        { error: `积分不足，${reportTier === "detailed" ? "详细版需要 3 次积分" : "请联系客服充值"}` },
+        { status: 402 }
+      );
+    }
 
     if (
       !formData.nationality ||
@@ -62,7 +72,7 @@ export async function POST(request: NextRequest) {
       .from("consultations")
       .insert({
         user_id: user.id,
-        input_data: formData,
+        input_data: { ...formData, tier: reportTier },
         ai_response: null,
         visa_type: null,
         status: "pending",

@@ -10,12 +10,12 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE public.users (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
-  credits INTEGER DEFAULT 3 NOT NULL,
+  credits INTEGER DEFAULT 10 NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 COMMENT ON TABLE public.users IS '用户信息表，扩展 Supabase auth.users';
-COMMENT ON COLUMN public.users.credits IS '剩余免费咨询次数，默认 3 次';
+COMMENT ON COLUMN public.users.credits IS '剩余免费咨询次数，默认 10 次';
 
 -- =====================
 -- Table: consultations

@@ -9,6 +9,7 @@ import Step2Background from "@/components/wizard/Step2Background";
 import Step3Intent from "@/components/wizard/Step3Intent";
 import { WizardFormData } from "@/types";
 import { createClient } from "@/lib/supabase/client";
+import VersionSelectModal from "@/components/wizard/VersionSelectModal";
 
 const initialFormData: WizardFormData = {
   nationality: "中国",
@@ -29,7 +30,8 @@ export default function WizardPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<WizardFormData>(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
-  const [credits, setCredits] = useState(3);
+  const [credits, setCredits] = useState(10);
+  const [showVersionModal, setShowVersionModal] = useState(false);
 
   useEffect(() => {
     const fetchCredits = async () => {
@@ -54,7 +56,12 @@ export default function WizardPage() {
     setFormData((prev) => ({ ...prev, ...updates }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
+    setShowVersionModal(true);
+  };
+
+  const handleConfirmVersion = async (tier: "brief" | "detailed") => {
+    setShowVersionModal(false);
     setIsLoading(true);
     try {
       const supabase = createClient();
@@ -74,12 +81,16 @@ export default function WizardPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, tier }),
       });
 
       if (!response.ok) {
         if (response.status === 402) {
-          toast.error("积分不足！每次生成消耗 1 次积分，请联系客服充值。");
+          toast.error(
+            tier === "detailed"
+              ? "积分不足！详细版消耗 3 次积分，请联系客服充值。"
+              : "积分不足！每次生成消耗 1 次积分，请联系客服充值。"
+          );
           return;
         }
         if (response.status === 401) {
@@ -108,6 +119,14 @@ export default function WizardPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {showVersionModal && (
+        <VersionSelectModal
+          credits={credits}
+          isLoading={isLoading}
+          onSelect={handleConfirmVersion}
+          onClose={() => setShowVersionModal(false)}
+        />
+      )}
       <StepIndicator currentStep={currentStep} />
 
       <main className="max-w-xl mx-auto px-4 py-8 pb-16">
