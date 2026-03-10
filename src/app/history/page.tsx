@@ -30,7 +30,7 @@ export default async function HistoryPage() {
 
   const { data: consultations, error } = await supabase
     .from("consultations")
-    .select("id, created_at, visa_type, input_data, ai_response")
+    .select("id, created_at, visa_type, input_data, ai_response, status")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -107,7 +107,9 @@ export default async function HistoryPage() {
           {records.map((record) => {
             const inputData = record.input_data;
             const targetCountries = inputData?.targetCountries || [];
-            const status = record.status ?? (record.ai_response ? "completed" : "pending");
+            const rawStatus = record.status ?? (record.ai_response ? "completed" : "pending");
+            const ageMin = (Date.now() - new Date(record.created_at).getTime()) / 60000;
+            const status = rawStatus === "pending" && ageMin > 10 ? "failed" : rawStatus;
             const absoluteDate = new Date(record.created_at).toLocaleString("zh-CN");
 
             return (

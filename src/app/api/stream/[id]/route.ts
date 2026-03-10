@@ -189,6 +189,8 @@ export async function GET(
   }
 }
 
+const VISA_TYPE_BLOCKLIST = ["attorney", "agent", "lawyer", "mara", "律师", "顾问", "代理", "licensed", "immigration consultant"];
+
 function extractVisaType(text: string): string {
   const lines = text.split("\n");
   for (const line of lines) {
@@ -199,7 +201,10 @@ function extractVisaType(text: string): string {
       const match =
         line.match(/[「『【（(]([^」』】）)]+)[」』】）)]/)?.[1] ||
         line.match(/\*\*([^*]+)\*\*/)?.[1];
-      if (match && match.length < 50) return match;
+      if (match && match.length < 30) {
+        const lower = match.toLowerCase();
+        if (!VISA_TYPE_BLOCKLIST.some((w) => lower.includes(w))) return match;
+      }
     }
   }
   return "综合评估";
