@@ -7,8 +7,12 @@ export default function HomePage() {
       <section className="relative bg-primary-900 text-white overflow-hidden">
         {/* 背景装饰 */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent-600/20 via-primary-800/0 to-primary-900/0 pointer-events-none" />
-        <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none"
-          style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}
+        <div
+          className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+          }}
         />
 
         <div className="relative max-w-6xl mx-auto px-4 py-24 md:py-36">
@@ -19,11 +23,12 @@ export default function HomePage() {
               <span>由 Claude AI 驱动 · 60秒生成专属报告 · 无需上传证件</span>
             </div>
 
+            {/* 修复1：标题语义清晰，避免歧义 */}
             <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight">
-              签证路径
+              移民签证路径
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-400 to-accent-300">
-                问问 AI
+                AI 帮你看清楚
               </span>
             </h1>
 
@@ -48,12 +53,12 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* 统计数据栏 */}
+          {/* 修复2：统计数据换成用户更有感知的信息 */}
           <div className="mt-20 grid grid-cols-3 gap-4 md:gap-8 max-w-2xl mx-auto border-t border-white/10 pt-10">
             {[
-              { num: "6+", label: "目标国家覆盖" },
-              { num: "30+", label: "分析维度" },
-              { num: "60s", label: "报告生成速度" },
+              { num: "¥0", label: "免费开始，无需信用卡" },
+              { num: "3 min", label: "填写完成所需时间" },
+              { num: "即时", label: "AI 报告生成" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="text-3xl md:text-4xl font-extrabold text-white mb-1">{stat.num}</div>
@@ -79,28 +84,45 @@ export default function HomePage() {
             </p>
           </div>
 
+          {/* 修复4：用 SVG 图标替换 emoji */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                icon: "🧠",
+                icon: (
+                  <svg className="w-7 h-7 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                ),
                 title: "多维度综合分析",
                 desc: "综合国籍、学历、职业、收入、家庭状况、预算、时间线等 30+ 维度，精准匹配签证路径",
                 highlight: "30+ 维度",
               },
               {
-                icon: "🌏",
+                icon: (
+                  <svg className="w-7 h-7 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                ),
                 title: "多国横向对比",
                 desc: "一次填写，AI 同步评估澳大利亚、加拿大、美国、英国等主流目的地的可行性",
                 highlight: "6+ 国家",
               },
               {
-                icon: "📋",
+                icon: (
+                  <svg className="w-7 h-7 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                ),
                 title: "完整申请方案",
-                desc: "不只是说\"你适合某签证\"，而是给出材料清单、费用预估、时间线和具体建议",
+                desc: "不只是说「你适合某签证」，而是给出材料清单、费用预估、时间线和具体建议",
                 highlight: "即时可用",
               },
               {
-                icon: "🔒",
+                icon: (
+                  <svg className="w-7 h-7 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                ),
                 title: "隐私优先",
                 desc: "仅需文字填写，无需上传护照、银行流水等任何敏感证件",
                 highlight: "零上传",
@@ -110,7 +132,9 @@ export default function HomePage() {
                 key={card.title}
                 className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
               >
-                <div className="text-3xl mb-4">{card.icon}</div>
+                <div className="w-12 h-12 bg-accent-50 rounded-xl flex items-center justify-center mb-4">
+                  {card.icon}
+                </div>
                 <div className="inline-block text-xs font-bold text-accent-600 bg-accent-50 px-2 py-0.5 rounded-full mb-3">
                   {card.highlight}
                 </div>
@@ -300,114 +324,49 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== Screen 5: 定价 ===== */}
+      {/* ===== Screen 5: 修复3：定价区块替换为"早期体验"占位 ===== */}
       <section className="py-20 bg-white">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center mb-14">
-            <p className="text-accent-600 font-semibold text-sm uppercase tracking-widest mb-3">
-              透明定价
-            </p>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              先免费体验，满意再付费
-            </h2>
-            <p className="text-gray-500 text-lg">注册即赠 3 次完整评估，无需信用卡</p>
+        <div className="max-w-3xl mx-auto px-4 text-center">
+          <p className="text-accent-600 font-semibold text-sm uppercase tracking-widest mb-3">
+            早期免费体验
+          </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            现在注册，永久免费使用 3 次
+          </h2>
+          <p className="text-gray-500 text-lg mb-10">
+            产品处于早期阶段，注册即获 3 次完整评估机会，无需信用卡，随时可用
+          </p>
+
+          <div className="bg-primary-50 border border-primary-100 rounded-2xl p-8 mb-8">
+            <div className="text-5xl font-extrabold text-primary-900 mb-2">
+              ¥0
+            </div>
+            <div className="text-primary-500 text-sm mb-6">注册即获，无任何隐藏费用</div>
+            <ul className="space-y-3 text-left max-w-xs mx-auto mb-8">
+              {[
+                "3 次完整 AI 分析报告",
+                "所有签证类型覆盖",
+                "PDF 导出",
+                "历史报告永久保存",
+              ].map((f) => (
+                <li key={f} className="flex items-center gap-3 text-sm text-gray-700">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/auth/login?mode=signup"
+              className="inline-flex items-center gap-2 px-10 py-4 bg-accent-500 hover:bg-accent-600 text-white font-bold rounded-xl text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            >
+              免费注册，立即体验
+            </Link>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                name: "免费体验",
-                price: "¥0",
-                period: "注册赠送",
-                desc: "新用户注册即获",
-                credits: "3 次评估",
-                features: ["完整 AI 分析报告", "所有签证类型", "PDF 导出", "历史报告保存"],
-                cta: "免费注册",
-                href: "/auth/login?mode=signup",
-                featured: false,
-              },
-              {
-                name: "进阶套餐",
-                price: "¥49",
-                period: "一次性",
-                desc: "适合认真规划者",
-                credits: "10 次评估",
-                features: ["完整 AI 分析报告", "所有签证类型", "PDF 导出", "历史报告保存", "优先生成队列"],
-                cta: "立即购买",
-                href: "/auth/login?mode=signup",
-                featured: true,
-                badge: "最受欢迎",
-              },
-              {
-                name: "专业套餐",
-                price: "¥99",
-                period: "一次性",
-                desc: "适合家庭或多方案对比",
-                credits: "30 次评估",
-                features: ["完整 AI 分析报告", "所有签证类型", "PDF 导出", "历史报告保存", "优先生成队列", "多成员共享"],
-                cta: "立即购买",
-                href: "/auth/login?mode=signup",
-                featured: false,
-              },
-            ].map((plan) => (
-              <div
-                key={plan.name}
-                className={`relative rounded-2xl border p-8 flex flex-col transition-all ${
-                  plan.featured
-                    ? "border-accent-400 bg-primary-900 text-white shadow-2xl scale-[1.02]"
-                    : "border-gray-200 bg-white shadow-sm hover:shadow-md"
-                }`}
-              >
-                {plan.badge && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent-500 text-white text-xs font-bold px-4 py-1 rounded-full">
-                    {plan.badge}
-                  </div>
-                )}
-                <div className="mb-6">
-                  <div className={`text-sm font-semibold mb-1 ${plan.featured ? "text-accent-300" : "text-gray-500"}`}>
-                    {plan.name}
-                  </div>
-                  <div className="flex items-baseline gap-1 mb-1">
-                    <span className={`text-4xl font-extrabold ${plan.featured ? "text-white" : "text-gray-900"}`}>
-                      {plan.price}
-                    </span>
-                    <span className={`text-sm ${plan.featured ? "text-primary-400" : "text-gray-400"}`}>
-                      {plan.period}
-                    </span>
-                  </div>
-                  <div className={`text-2xl font-bold mb-1 ${plan.featured ? "text-accent-300" : "text-accent-600"}`}>
-                    {plan.credits}
-                  </div>
-                  <div className={`text-sm ${plan.featured ? "text-primary-400" : "text-gray-500"}`}>
-                    {plan.desc}
-                  </div>
-                </div>
-
-                <ul className="space-y-3 mb-8 flex-1">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm">
-                      <span className={`text-base flex-shrink-0 ${plan.featured ? "text-accent-400" : "text-green-500"}`}>✓</span>
-                      <span className={plan.featured ? "text-primary-200" : "text-gray-600"}>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Link
-                  href={plan.href}
-                  className={`w-full text-center px-6 py-3 rounded-xl font-bold transition-all ${
-                    plan.featured
-                      ? "bg-accent-500 hover:bg-accent-600 text-white shadow-lg"
-                      : "bg-gray-900 hover:bg-gray-800 text-white"
-                  }`}
-                >
-                  {plan.cta}
-                </Link>
-              </div>
-            ))}
-          </div>
-
-          <p className="text-center text-gray-400 text-sm mt-8">
-            付费功能即将上线 · 目前仅需免费注册即可获得 3 次完整评估
+          <p className="text-gray-400 text-sm">
+            付费套餐即将推出 · 早期用户将享有专属优惠
           </p>
         </div>
       </section>
@@ -423,7 +382,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer CTA + Footer */}
+      {/* Footer CTA */}
       <section className="py-24 bg-primary-900 text-white text-center">
         <div className="max-w-2xl mx-auto px-4">
           <h2 className="text-3xl md:text-5xl font-extrabold mb-4 leading-tight">
@@ -436,7 +395,7 @@ export default function HomePage() {
           </p>
           <Link
             href="/auth/login?mode=signup"
-            className="inline-flex items-center gap-2 px-12 py-5 bg-accent-500 hover:bg-accent-600 text-white font-extrabold rounded-2xl text-xl transition-all shadow-2xl hover:shadow-3xl hover:-translate-y-1"
+            className="inline-flex items-center gap-2 px-12 py-5 bg-accent-500 hover:bg-accent-600 text-white font-extrabold rounded-2xl text-xl transition-all shadow-2xl hover:-translate-y-1"
           >
             免费注册，立即开始
           </Link>

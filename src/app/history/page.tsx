@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Consultation } from "@/types";
+import DeleteButton from "./DeleteButton";
 
 function relativeTime(dateStr: string): string {
   const now = Date.now();
@@ -110,9 +111,8 @@ export default async function HistoryPage() {
             const absoluteDate = new Date(record.created_at).toLocaleString("zh-CN");
 
             return (
-              <Link
+              <div
                 key={record.id}
-                href={`/result/${record.id}`}
                 className="flex items-center gap-4 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary-200 transition-all p-5 group"
               >
                 {/* 国家数量 badge */}
@@ -123,8 +123,8 @@ export default async function HistoryPage() {
                   <span className="text-primary-400 text-xs leading-none mt-0.5">国家</span>
                 </div>
 
-                {/* 主要内容 */}
-                <div className="flex-1 min-w-0">
+                {/* 主要内容（可点击区域） */}
+                <Link href={`/result/${record.id}`} className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                     {record.visa_type && (
                       <span className="px-2 py-0.5 bg-primary-100 text-primary-700 rounded-full text-xs font-medium">
@@ -144,24 +144,27 @@ export default async function HistoryPage() {
                   <p className="text-gray-400 text-xs mt-0.5 truncate">
                     {inputData?.purpose || "—"} · {inputData?.education || "—"} · {inputData?.career || "—"}
                   </p>
-                </div>
+                </Link>
 
-                {/* 时间 + 箭头 */}
+                {/* 时间 + 操作 */}
                 <div className="text-right flex-shrink-0 flex flex-col items-end gap-1.5">
-                  <p
-                    className="text-gray-400 text-xs"
-                    title={absoluteDate}
-                  >
+                  <p className="text-gray-400 text-xs" title={absoluteDate}>
                     {relativeTime(record.created_at)}
                   </p>
-                  <span className="text-primary-500 text-sm font-medium group-hover:text-primary-700 transition-colors flex items-center gap-1">
-                    查看报告
-                    <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <DeleteButton id={record.id} />
+                    <Link
+                      href={`/result/${record.id}`}
+                      className="text-primary-500 text-sm font-medium hover:text-primary-700 transition-colors flex items-center gap-1"
+                    >
+                      查看报告
+                      <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>

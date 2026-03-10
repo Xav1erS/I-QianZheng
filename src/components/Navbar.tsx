@@ -59,11 +59,13 @@ export default function Navbar() {
     router.refresh();
   };
 
+  const isOnWizard = pathname.startsWith("/wizard");
+
   const navLinkClass = (href: string) =>
-    `text-sm font-medium transition ${
+    `text-sm font-medium px-3 py-1.5 rounded-lg transition-colors ${
       pathname === href
-        ? "text-white"
-        : "text-primary-300 hover:text-white"
+        ? "text-white bg-primary-700"
+        : "text-primary-300 hover:text-white hover:bg-primary-700/60"
     }`;
 
   // 登录/注册页有自己的品牌区块，不需要全局 Navbar
@@ -87,9 +89,11 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-6">
           {user ? (
             <>
-              <Link href="/wizard" className={navLinkClass("/wizard")}>
-                开始评估
-              </Link>
+              {!isOnWizard && (
+                <Link href="/wizard" className={navLinkClass("/wizard")}>
+                  开始评估
+                </Link>
+              )}
               <Link href="/history" className={navLinkClass("/history")}>
                 我的报告
               </Link>
@@ -107,7 +111,7 @@ export default function Navbar() {
               )}
               <button
                 onClick={handleLogout}
-                className="text-primary-400 hover:text-white transition text-sm"
+                className="text-sm font-medium px-3 py-1.5 rounded-lg text-primary-300 hover:text-white hover:bg-primary-700/60 transition-colors"
               >
                 退出
               </button>
@@ -178,21 +182,23 @@ export default function Navbar() {
                   <span className="text-white font-bold">{credits}</span> 次
                 </p>
               )}
-              <Link
-                href="/wizard"
-                className="block py-2 px-2 rounded-lg text-primary-200 hover:text-white hover:bg-primary-700 transition"
-              >
-                开始评估
-              </Link>
+              {!isOnWizard && (
+                <Link
+                  href="/wizard"
+                  className="block py-2 px-2 rounded-lg text-primary-200 hover:text-white hover:bg-primary-700 transition-colors"
+                >
+                  开始评估
+                </Link>
+              )}
               <Link
                 href="/history"
-                className="block py-2 px-2 rounded-lg text-primary-200 hover:text-white hover:bg-primary-700 transition"
+                className="block py-2 px-2 rounded-lg text-primary-200 hover:text-white hover:bg-primary-700 transition-colors"
               >
                 我的报告
               </Link>
               <button
                 onClick={handleLogout}
-                className="block w-full text-left py-2 px-2 rounded-lg text-primary-400 hover:text-white hover:bg-primary-700 transition"
+                className="block w-full text-left py-2 px-2 rounded-lg text-primary-400 hover:text-white hover:bg-primary-700 transition-colors"
               >
                 退出登录
               </button>
