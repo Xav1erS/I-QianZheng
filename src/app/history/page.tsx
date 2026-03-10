@@ -18,6 +18,24 @@ function relativeTime(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("zh-CN", { year: "numeric", month: "short", day: "numeric" });
 }
 
+const COUNTRY_FLAGS: Record<string, string> = {
+  "美国": "🇺🇸",
+  "加拿大": "🇨🇦",
+  "澳大利亚": "🇦🇺",
+  "英国": "🇬🇧",
+  "新加坡": "🇸🇬",
+  "新西兰": "🇳🇿",
+  "日本": "🇯🇵",
+  "德国": "🇩🇪",
+  "法国": "🇫🇷",
+  "荷兰": "🇳🇱",
+  "葡萄牙": "🇵🇹",
+  "西班牙": "🇪🇸",
+  "瑞典": "🇸🇪",
+  "丹麦": "🇩🇰",
+  "香港": "🇭🇰",
+};
+
 export default async function HistoryPage() {
   const supabase = await createClient();
   const {
@@ -41,148 +59,224 @@ export default async function HistoryPage() {
     .single();
 
   const records = (consultations || []) as Consultation[];
+  const credits = userProfile?.credits ?? 0;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* 页面标题 */}
-      <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">我的评估报告</h1>
-          <p className="text-gray-500 mt-1 text-sm">
-            {records.length > 0 ? `共 ${records.length} 份报告` : "查看您的历史签证路径评估记录"}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div
-            className={`text-sm px-3 py-2 rounded-lg ${
-              (userProfile?.credits ?? 0) === 0
-                ? "bg-red-50 text-red-700"
-                : "text-gray-600 bg-gray-100"
-            }`}
-          >
-            剩余积分：
-            <span className={`font-bold ${(userProfile?.credits ?? 0) === 0 ? "text-red-700" : "text-primary-700"}`}>
-              {userProfile?.credits ?? 0}
-            </span>{" "}
-            次
+    <div className="min-h-screen bg-gray-50">
+      {/* 页面顶部 header */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">我的评估报告</h1>
+              <p className="text-gray-500 mt-1 text-sm">
+                {records.length > 0
+                  ? `共 ${records.length} 份历史报告`
+                  : "AI 签证路径评估，结果永久保存"}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div
+                className={`flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl border ${
+                  credits === 0
+                    ? "bg-red-50 text-red-700 border-red-200"
+                    : "bg-white text-gray-700 border-gray-200"
+                }`}
+              >
+                <span
+                  className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                    credits === 0 ? "bg-red-500" : "bg-emerald-500"
+                  }`}
+                />
+                <span>
+                  剩余{" "}
+                  <span
+                    className={`font-bold text-base ${
+                      credits === 0 ? "text-red-700" : "text-gray-900"
+                    }`}
+                  >
+                    {credits}
+                  </span>{" "}
+                  次
+                </span>
+              </div>
+              <Link
+                href="/wizard"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-accent-500 hover:bg-accent-600 text-white font-semibold rounded-xl transition text-sm shadow-sm hover:shadow-md"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                </svg>
+                新建评估
+              </Link>
+            </div>
           </div>
-          <Link
-            href="/wizard"
-            className="px-5 py-2.5 bg-accent-500 hover:bg-accent-600 text-white font-semibold rounded-lg transition text-sm"
-          >
-            + 新建评估
-          </Link>
         </div>
       </div>
 
-      {/* 报告列表 */}
-      {error ? (
-        <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <p className="text-red-500 mb-4">加载记录失败，请刷新页面重试</p>
-          <a
-            href="/history"
-            className="text-sm text-primary-600 hover:text-primary-700 underline"
-          >
-            刷新页面
-          </a>
-        </div>
-      ) : records.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+        {error ? (
+          <div className="text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <p className="text-red-500 mb-4">加载记录失败，请刷新页面重试</p>
+            <a href="/history" className="text-sm text-primary-600 hover:text-primary-700 underline">
+              刷新页面
+            </a>
           </div>
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">暂无评估记录</h3>
-          <p className="text-gray-500 mb-6 text-sm">您还没有生成过签证路径评估报告</p>
-          <Link
-            href="/wizard"
-            className="inline-block px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white font-semibold rounded-lg transition"
-          >
-            立即开始评估
-          </Link>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {records.map((record) => {
-            const inputData = record.input_data;
-            const targetCountries = inputData?.targetCountries || [];
-            const rawStatus = record.status ?? (record.ai_response ? "completed" : "pending");
-            const ageMin = (Date.now() - new Date(record.created_at).getTime()) / 60000;
-            const status = rawStatus === "pending" && ageMin > 10 ? "failed" : rawStatus;
-            const absoluteDate = new Date(record.created_at).toLocaleString("zh-CN");
+        ) : records.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <div className="w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">暂无评估记录</h3>
+            <p className="text-gray-400 mb-8 text-sm">完成向导，AI 将为您生成专属签证路径方案</p>
+            <Link
+              href="/wizard"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white font-semibold rounded-xl transition shadow-sm"
+            >
+              立即开始评估
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {records.map((record) => {
+              const inputData = record.input_data;
+              const targetCountries: string[] = inputData?.targetCountries || [];
+              const rawStatus = record.status ?? (record.ai_response ? "completed" : "pending");
+              const ageMin = (Date.now() - new Date(record.created_at).getTime()) / 60000;
+              const status = rawStatus === "pending" && ageMin > 10 ? "failed" : rawStatus;
+              const absoluteDate = new Date(record.created_at).toLocaleString("zh-CN");
 
-            return (
-              <div
-                key={record.id}
-                className="flex items-center gap-4 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary-200 transition-all p-5 group"
-              >
-                {/* 国家数量 badge */}
-                <div className="flex-shrink-0 w-12 h-12 bg-primary-50 rounded-xl flex flex-col items-center justify-center border border-primary-100 group-hover:bg-primary-100 transition-colors">
-                  <span className="text-primary-700 font-bold text-lg leading-none">
-                    {targetCountries.length}
-                  </span>
-                  <span className="text-primary-400 text-xs leading-none mt-0.5">国家</span>
-                </div>
+              const statusConfig =
+                status === "completed"
+                  ? {
+                      label: "已生成",
+                      textColor: "text-emerald-700",
+                      bg: "bg-emerald-50",
+                      bar: "bg-emerald-500",
+                      dot: "bg-emerald-500",
+                    }
+                  : status === "pending"
+                  ? {
+                      label: "生成中",
+                      textColor: "text-amber-700",
+                      bg: "bg-amber-50",
+                      bar: "bg-amber-400",
+                      dot: "bg-amber-500",
+                    }
+                  : {
+                      label: "生成失败",
+                      textColor: "text-red-600",
+                      bg: "bg-red-50",
+                      bar: "bg-red-400",
+                      dot: "bg-red-500",
+                    };
 
-                {/* 主要内容（可点击区域） */}
-                <Link href={`/result/${record.id}`} className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                    {record.visa_type && status === "completed" && (
-                      <span className="px-2 py-0.5 bg-primary-100 text-primary-700 rounded-full text-xs font-medium">
-                        {record.visa_type}
+              return (
+                <div
+                  key={record.id}
+                  className="relative bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all overflow-hidden group"
+                >
+                  {/* 左侧状态色条 */}
+                  <div className={`absolute left-0 top-0 bottom-0 w-1 ${statusConfig.bar}`} />
+
+                  <div className="pl-6 pr-5 pt-5 pb-5">
+                    {/* 顶栏：状态 + 时间 + 删除 */}
+                    <div className="flex items-center justify-between mb-4">
+                      <span
+                        className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${statusConfig.bg} ${statusConfig.textColor}`}
+                      >
+                        {status === "pending" ? (
+                          <span className="w-2.5 h-2.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
+                        )}
+                        {statusConfig.label}
                       </span>
-                    )}
-                    {status === "pending" && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs">
-                        <span className="w-2.5 h-2.5 border border-yellow-600 border-t-transparent rounded-full animate-spin" />
-                        生成中
-                      </span>
-                    )}
-                    {status === "completed" && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                        已生成
-                      </span>
-                    )}
-                    {status === "failed" && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-medium">
-                        <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
-                        生成失败
-                      </span>
-                    )}
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-gray-400" title={absoluteDate}>
+                          {relativeTime(record.created_at)}
+                        </span>
+                        <DeleteButton id={record.id} />
+                      </div>
+                    </div>
+
+                    {/* 目标国家（主标题级别） */}
+                    <div className="flex items-center gap-2 mb-3 flex-wrap">
+                      {targetCountries.length > 0 ? (
+                        targetCountries.map((country, i) => (
+                          <span
+                            key={i}
+                            className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-800 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-xl"
+                          >
+                            <span className="text-base">{COUNTRY_FLAGS[country] ?? "🌍"}</span>
+                            {country}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-sm text-gray-400">未选择目标国家</span>
+                      )}
+                    </div>
+
+                    {/* 元数据标签 */}
+                    <div className="flex items-center gap-2 flex-wrap mb-5">
+                      {[
+                        { icon: "🎯", value: inputData?.purpose },
+                        { icon: "🎓", value: inputData?.education },
+                        { icon: "💼", value: inputData?.career },
+                      ]
+                        .filter((t) => t.value)
+                        .map((tag, i) => (
+                          <span
+                            key={i}
+                            className="inline-flex items-center gap-1 text-xs text-gray-500 px-2.5 py-1 bg-gray-50 border border-gray-100 rounded-lg"
+                          >
+                            <span>{tag.icon}</span>
+                            {tag.value}
+                          </span>
+                        ))}
+                    </div>
+
+                    {/* 底栏：签证类型 + 操作按钮 */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        {record.visa_type && status === "completed" && (
+                          <span className="text-xs font-medium text-primary-700 bg-primary-50 border border-primary-100 px-2.5 py-1 rounded-full">
+                            {record.visa_type}
+                          </span>
+                        )}
+                      </div>
+                      <Link
+                        href={`/result/${record.id}`}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm"
+                      >
+                        查看报告
+                        <svg
+                          className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
+                    </div>
                   </div>
-                  <p className="text-gray-900 font-medium text-sm truncate">
-                    {inputData?.nationality || "—"} → {targetCountries.join("、") || "—"}
-                  </p>
-                  <p className="text-gray-400 text-xs mt-0.5 truncate">
-                    {inputData?.purpose || "—"} · {inputData?.education || "—"} · {inputData?.career || "—"}
-                  </p>
-                </Link>
-
-                {/* 时间 + 操作 */}
-                <div className="text-right flex-shrink-0 flex flex-col items-end gap-1.5">
-                  <p className="text-gray-400 text-xs" title={absoluteDate}>
-                    {relativeTime(record.created_at)}
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <DeleteButton id={record.id} />
-                    <Link
-                      href={`/result/${record.id}`}
-                      className="text-primary-500 text-sm font-medium hover:text-primary-700 transition-colors flex items-center gap-1"
-                    >
-                      查看报告
-                      <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </Link>
-                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

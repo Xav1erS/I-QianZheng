@@ -128,40 +128,45 @@ export default function ResultPage() {
       {/* 顶部免责声明 */}
       <DisclaimerBanner />
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* 操作栏 */}
-        <div className="no-print flex items-center justify-between mb-6 flex-wrap gap-3">
-          <div>
-            <Link
-              href="/history"
-              className="text-primary-600 hover:text-primary-700 text-sm flex items-center gap-1 mb-2"
-            >
-              ← 返回历史报告
-            </Link>
-            <h1 className="text-2xl font-bold text-gray-900">
-              签证路径评估报告
-            </h1>
-            {consultation && (
-              <p className="text-gray-500 text-sm mt-1">
-                生成时间：
-                {new Date(consultation.created_at).toLocaleString("zh-CN")}
-                {consultation.visa_type && (
-                  <span className="ml-2 px-2 py-0.5 bg-primary-100 text-primary-700 rounded-full text-xs font-medium">
-                    {consultation.visa_type}
+      {/* 页面 header */}
+      <div className="no-print bg-white border-b border-gray-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <Link
+                href="/history"
+                className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-primary-600 transition-colors mb-3"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                返回报告列表
+              </Link>
+              <h1 className="text-2xl font-bold text-gray-900">签证路径评估报告</h1>
+              {consultation && (
+                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                  <span className="text-gray-400 text-sm">
+                    {new Date(consultation.created_at).toLocaleString("zh-CN")}
                   </span>
-                )}
-              </p>
+                  {consultation.visa_type && (
+                    <span className="px-2.5 py-0.5 bg-primary-50 text-primary-700 border border-primary-100 rounded-full text-xs font-semibold">
+                      {consultation.visa_type}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+            {!isStreaming && streamedContent && (
+              <div className="flex items-center gap-2">
+                <CopyButton text={streamedContent} />
+                <ExportPDFButton targetId="report-content" />
+              </div>
             )}
           </div>
-
-          {!isStreaming && streamedContent && (
-            <div className="flex items-center gap-2">
-              <CopyButton text={streamedContent} />
-              <ExportPDFButton targetId="report-content" />
-            </div>
-          )}
         </div>
+      </div>
 
+      <div className="max-w-4xl mx-auto px-4 py-8">
         {/* 生成中：顶部轻提示（有内容时才显示，避免和内容区重复） */}
         {isStreaming && streamedContent && (
           <div className="mb-4 flex items-center gap-2 px-4 py-2.5 bg-primary-50 border border-primary-100 rounded-xl text-primary-600 text-sm">
