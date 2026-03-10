@@ -40,7 +40,7 @@ export default function Step1Profile({ data, onChange, onNext }: Step1Props) {
   return (
     <div>
       {/* 步骤标题头部 */}
-      <div className="px-8 pt-8 pb-6 border-b border-gray-100">
+      <div className="px-5 sm:px-8 pt-8 pb-6 border-b border-gray-100">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center text-xl">👤</div>
           <div>
@@ -50,7 +50,7 @@ export default function Step1Profile({ data, onChange, onNext }: Step1Props) {
         </div>
       </div>
 
-      <div className="px-8 py-6 space-y-7">
+      <div className="px-5 sm:px-8 py-6 space-y-7">
         {/* 国籍 */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -159,7 +159,7 @@ export default function Step1Profile({ data, onChange, onNext }: Step1Props) {
       </div>
 
       {/* 底部按钮 */}
-      <div className="px-8 pb-8">
+      <div className="px-5 sm:px-8 pb-8">
         <button
           onClick={onNext}
           disabled={!isValid}
