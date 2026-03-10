@@ -10,6 +10,7 @@ import ReportSummaryCards from "@/components/result/ReportSummaryCards";
 import ReportTOC from "@/components/result/ReportTOC";
 import CopyButton from "@/components/result/CopyButton";
 import ExportPDFButton from "@/components/result/ExportPDFButton";
+import ChatPanel from "@/components/result/ChatPanel";
 import { createClient } from "@/lib/supabase/client";
 import { Consultation } from "@/types";
 
@@ -23,6 +24,7 @@ export default function ResultPage() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [elapsed, setElapsed] = useState(0);
+  const [userCredits, setUserCredits] = useState(0);
 
   // 计时器：仅在 streaming 且尚无内容时运行
   useEffect(() => {
@@ -68,6 +70,15 @@ export default function ResultPage() {
       }
 
       setConsultation(data as Consultation);
+
+      // 查询用户积分（供 ChatPanel 使用）
+      const { data: profile } = await supabase
+        .from("users")
+        .select("credits")
+        .eq("id", user.id)
+        .single();
+      if (profile) setUserCredits(profile.credits);
+
       setIsLoading(false);
 
       // 已有 AI 响应，直接显示
@@ -284,6 +295,13 @@ export default function ResultPage() {
             >
               重新评估
             </Link>
+          </div>
+        )}
+
+        {/* 追问对话区（报告生成完成后展示） */}
+        {!isStreaming && streamedContent && (
+          <div className="no-print mt-8">
+            <ChatPanel consultationId={id} initialCredits={userCredits} />
           </div>
         )}
       </div>

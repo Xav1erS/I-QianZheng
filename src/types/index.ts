@@ -32,6 +32,15 @@ export interface Consultation {
   created_at: string;
 }
 
+// 追问对话消息类型
+export interface Message {
+  id: string;
+  consultation_id: string;
+  role: "user" | "assistant";
+  content: string;
+  created_at: string;
+}
+
 // 用户信息类型
 export interface UserProfile {
   id: string;

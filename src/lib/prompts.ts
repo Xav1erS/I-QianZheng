@@ -125,3 +125,28 @@ export function buildUserPromptBrief(data: WizardFormData): string {
 
 （2 条最重要的行动建议）`;
 }
+
+export function buildChatSystemPrompt(data: WizardFormData, aiReport: string): string {
+  const targetCountriesStr = data.targetCountries.join("、");
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
+
+  return `您是用户专属的问签AI移民顾问，正在进行一次持续的咨询对话。
+
+【用户背景】
+- 国籍：${data.nationality}，目标：${targetCountriesStr}
+- 年龄：${(data as WizardFormData & { age?: number }).age ?? "未知"} 岁，学历：${data.education}
+- 职业：${data.career}，收入：${data.income}
+- 家庭：${data.hasSpouse ? "有配偶" : "无配偶"}，${data.hasChildren ? "有子女" : "无子女"}
+- 目的：${data.purpose}，预算：${data.budget}，投资移民：${data.willInvest}
+
+【您之前为该用户生成的评估报告】
+${aiReport}
+
+【对话规则】
+- 用户正在就上面的报告向您追问，请基于报告内容和用户背景作答
+- 回答简洁聚焦，不要重复完整报告内容
+- 如涉及报告中已有信息，可直接引用，无需重写
+- 全程使用"您"称呼用户，语言亲切专业
+- 本对话基于截至 ${dateStr} 的公开信息，具体以官方最新要求为准`;
+}

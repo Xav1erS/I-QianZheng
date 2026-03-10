@@ -86,7 +86,42 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- =====================
+-- Table: messages（追问对话）
+-- =====================
+CREATE TABLE public.messages (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  consultation_id UUID REFERENCES public.consultations(id) ON DELETE CASCADE NOT NULL,
+  role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
+  content TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+COMMENT ON TABLE public.messages IS '追问对话记录，每条 consultation 下的多轮问答';
+
+ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "用户只能查询自己咨询的消息"
+  ON public.messages FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.consultations c
+      WHERE c.id = consultation_id AND c.user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "用户只能插入自己咨询的消息"
+  ON public.messages FOR INSERT
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.consultations c
+      WHERE c.id = consultation_id AND c.user_id = auth.uid()
+    )
+  );
+
+-- =====================
 -- 索引优化
 -- =====================
 CREATE INDEX idx_consultations_user_id ON public.consultations(user_id);
 CREATE INDEX idx_consultations_created_at ON public.consultations(created_at DESC);
+CREATE INDEX idx_messages_consultation_id ON public.messages(consultation_id);
+CREATE INDEX idx_messages_created_at ON public.messages(created_at ASC);
