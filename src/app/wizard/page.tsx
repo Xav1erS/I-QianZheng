@@ -107,58 +107,41 @@ export default function WizardPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* 左侧步骤进度条 */}
+    <div className="min-h-screen bg-slate-50">
       <StepIndicator currentStep={currentStep} />
 
-      {/* 右侧表单区域 */}
-      <main className="flex-1 flex flex-col">
-        {/* 移动端进度条 */}
-        <div className="md:hidden bg-primary-900 text-white px-4 pt-3 pb-2">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-primary-300 text-xs font-medium">评估进度</span>
-            <span className="text-primary-300 text-xs">第 {currentStep} 步 / 共 3 步</span>
-          </div>
-          <div className="w-full bg-primary-700 rounded-full h-1.5">
-            <div
-              className="bg-accent-500 h-1.5 rounded-full transition-all duration-500"
-              style={{ width: `${Math.round((currentStep / 3) * 100)}%` }}
+      <main className="max-w-xl mx-auto px-4 py-8 pb-16">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          {currentStep === 1 && (
+            <Step1Profile
+              data={formData}
+              onChange={handleChange}
+              onNext={() => setCurrentStep(2)}
             />
-          </div>
-          <p className="text-primary-400 text-xs mt-1.5">
-            {currentStep === 1 ? "用户画像" : currentStep === 2 ? "职业背景" : "移民意向"}
-          </p>
+          )}
+          {currentStep === 2 && (
+            <Step2Background
+              data={formData}
+              onChange={handleChange}
+              onNext={() => setCurrentStep(3)}
+              onBack={() => setCurrentStep(1)}
+            />
+          )}
+          {currentStep === 3 && (
+            <Step3Intent
+              data={formData}
+              onChange={handleChange}
+              onSubmit={handleSubmit}
+              onBack={() => setCurrentStep(2)}
+              isLoading={isLoading}
+              credits={credits}
+            />
+          )}
         </div>
 
-        <div className="flex-1 flex items-start justify-center p-6 md:p-10">
-          <div className="w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-            {currentStep === 1 && (
-              <Step1Profile
-                data={formData}
-                onChange={handleChange}
-                onNext={() => setCurrentStep(2)}
-              />
-            )}
-            {currentStep === 2 && (
-              <Step2Background
-                data={formData}
-                onChange={handleChange}
-                onNext={() => setCurrentStep(3)}
-                onBack={() => setCurrentStep(1)}
-              />
-            )}
-            {currentStep === 3 && (
-              <Step3Intent
-                data={formData}
-                onChange={handleChange}
-                onSubmit={handleSubmit}
-                onBack={() => setCurrentStep(2)}
-                isLoading={isLoading}
-                credits={credits}
-              />
-            )}
-          </div>
-        </div>
+        <p className="text-center text-xs text-gray-400 mt-6">
+          AI 分析结果仅供参考，不构成法律建议
+        </p>
       </main>
     </div>
   );
