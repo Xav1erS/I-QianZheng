@@ -183,7 +183,7 @@ export default function HomePage() {
                   title: "AI 生成专属报告",
                   desc: "60秒内，Claude AI 输出包含签证路径、材料清单、费用预估的完整方案",
                   detail: ["推荐签证路径", "所需材料清单", "费用 & 时间线"],
-                  time: "约 60 秒",
+                  time: "约 1 分钟",
                 },
               ].map((item) => (
                 <div key={item.step} className="flex flex-col items-center text-center">
