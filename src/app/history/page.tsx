@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { Consultation } from "@/types";
+import { Consultation, WizardFormData } from "@/types";
 import DeleteButton from "./DeleteButton";
 
 function relativeTime(dateStr: string): string {
@@ -116,8 +116,9 @@ export default async function HistoryPage() {
         ) : (
           <div className="space-y-4">
             {records.map((record) => {
-              const inputData = record.input_data;
+              const inputData = record.input_data as WizardFormData & { tier?: string };
               const targetCountries: string[] = inputData?.targetCountries || [];
+              const reportTier = inputData?.tier === "detailed" ? "detailed" : "brief";
               const rawStatus = record.status ?? (record.ai_response ? "completed" : "pending");
               const ageMin = (Date.now() - new Date(record.created_at).getTime()) / 60000;
               const status = rawStatus === "pending" && ageMin > 10 ? "failed" : rawStatus;
@@ -159,16 +160,27 @@ export default async function HistoryPage() {
                   <div className="pl-6 pr-5 pt-5 pb-5">
                     {/* 顶栏：状态 + 时间 + 删除 */}
                     <div className="flex items-center justify-between mb-4">
-                      <span
-                        className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${statusConfig.bg} ${statusConfig.textColor}`}
-                      >
-                        {status === "pending" ? (
-                          <span className="w-2.5 h-2.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                          <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
-                        )}
-                        {statusConfig.label}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${statusConfig.bg} ${statusConfig.textColor}`}
+                        >
+                          {status === "pending" ? (
+                            <span className="w-2.5 h-2.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
+                          )}
+                          {statusConfig.label}
+                        </span>
+                        <span
+                          className={`text-xs font-medium px-2 py-0.5 rounded-full border ${
+                            reportTier === "detailed"
+                              ? "bg-violet-50 text-violet-700 border-violet-200"
+                              : "bg-gray-50 text-gray-500 border-gray-200"
+                          }`}
+                        >
+                          {reportTier === "detailed" ? "详细版" : "简要版"}
+                        </span>
+                      </div>
                       <div className="flex items-center gap-3">
                         <span className="text-xs text-gray-400" title={absoluteDate}>
                           {relativeTime(record.created_at)}
