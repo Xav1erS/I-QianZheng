@@ -22,7 +22,7 @@ function parseMetrics(content: string) {
     }
   }
 
-  // 可行性：匹配"可行性评估：高/中/低"
+  // 可行性：优先匹配"可行性评估：高/中/低"，否则从匹配度百分比推导
   let feasibility = "—";
   let feasibilityColor = "text-gray-500";
   const feasMatch = content.match(/可行性[评估]*[：:]\s*(高|中|低|较高|较低|一般)/);
@@ -31,6 +31,14 @@ function parseMetrics(content: string) {
     if (feasibility.includes("高")) feasibilityColor = "text-green-500";
     else if (feasibility.includes("低")) feasibilityColor = "text-red-400";
     else feasibilityColor = "text-yellow-500";
+  } else {
+    const matches = Array.from(content.matchAll(/匹配度[：:]\s*(\d+)%/g));
+    if (matches.length > 0) {
+      const maxPct = Math.max(...matches.map((m) => parseInt(m[1], 10)));
+      if (maxPct >= 80) { feasibility = "高"; feasibilityColor = "text-green-500"; }
+      else if (maxPct >= 60) { feasibility = "中"; feasibilityColor = "text-yellow-500"; }
+      else { feasibility = "低"; feasibilityColor = "text-red-400"; }
+    }
   }
 
   // 材料数量：统计 checkbox 列表项
