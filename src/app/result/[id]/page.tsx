@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import DisclaimerBanner from "@/components/result/DisclaimerBanner";
 import ReportContent from "@/components/result/ReportContent";
 import ReportSummaryCards from "@/components/result/ReportSummaryCards";
+import ReportTOC from "@/components/result/ReportTOC";
 import CopyButton from "@/components/result/CopyButton";
 import ExportPDFButton from "@/components/result/ExportPDFButton";
 import { createClient } from "@/lib/supabase/client";
@@ -166,7 +167,7 @@ export default function ResultPage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 py-8">
         {/* 生成中：顶部轻提示（有内容时才显示，避免和内容区重复） */}
         {isStreaming && streamedContent && (
           <div className="mb-4 flex items-center gap-2 px-4 py-2.5 bg-primary-50 border border-primary-100 rounded-xl text-primary-600 text-sm">
@@ -180,7 +181,10 @@ export default function ResultPage() {
           <ReportSummaryCards content={streamedContent} />
         )}
 
-        {/* 报告内容 */}
+        {/* 报告内容 + 侧边目录 */}
+        <div className="flex gap-6 items-start">
+          {/* 主内容区 */}
+          <div className="flex-1 min-w-0">
         <div
           id="report-content"
           className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8"
@@ -258,6 +262,15 @@ export default function ResultPage() {
             </div>
           ) : null}
         </div>
+          </div>{/* end flex-1 */}
+
+          {/* 侧边目录（仅桌面端，报告生成完成后显示） */}
+          {!isStreaming && streamedContent && (
+            <aside className="hidden lg:block w-52 flex-shrink-0">
+              <ReportTOC content={streamedContent} />
+            </aside>
+          )}
+        </div>{/* end flex row */}
 
         {/* 底部操作 */}
         {!isStreaming && streamedContent && (

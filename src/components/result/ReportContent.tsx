@@ -2,6 +2,24 @@
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import type { ReactNode } from "react";
+
+function toId(text: string): string {
+  return (
+    text
+      .replace(/[^\w\u4e00-\u9fff\s]/g, " ")
+      .trim()
+      .replace(/\s+/g, "-")
+      .toLowerCase()
+      .slice(0, 50) || "section"
+  );
+}
+
+function extractText(children: ReactNode): string {
+  if (typeof children === "string") return children;
+  if (Array.isArray(children)) return children.map(extractText).join("");
+  return "";
+}
 
 interface ReportContentProps {
   content: string;
@@ -27,16 +45,22 @@ export default function ReportContent({
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          h2: ({ children }) => (
-            <h2 className="text-xl font-bold text-gray-900 mt-8 mb-4 pb-2 border-b border-gray-200 first:mt-0">
-              {children}
-            </h2>
-          ),
-          h3: ({ children }) => (
-            <h3 className="text-lg font-semibold text-gray-800 mt-6 mb-3">
-              {children}
-            </h3>
-          ),
+          h2: ({ children }) => {
+            const id = toId(extractText(children));
+            return (
+              <h2 id={id} className="scroll-mt-20 text-xl font-bold text-gray-900 mt-8 mb-4 pb-2 border-b border-gray-200 first:mt-0">
+                {children}
+              </h2>
+            );
+          },
+          h3: ({ children }) => {
+            const id = toId(extractText(children));
+            return (
+              <h3 id={id} className="scroll-mt-20 text-lg font-semibold text-gray-800 mt-6 mb-3">
+                {children}
+              </h3>
+            );
+          },
           p: ({ children }) => (
             <p className="text-gray-700 leading-relaxed mb-4">{children}</p>
           ),

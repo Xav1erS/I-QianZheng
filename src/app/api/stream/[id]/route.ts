@@ -4,7 +4,7 @@ import { buildSystemPrompt, buildUserPrompt } from "@/lib/prompts";
 import { WizardFormData } from "@/types";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 const KIMI_BASE_URL = "https://api.moonshot.cn/v1";
 const KIMI_MODEL = process.env.KIMI_MODEL || "kimi-k2.5";
@@ -75,7 +75,7 @@ export async function GET(
       },
       body: JSON.stringify({
         model: KIMI_MODEL,
-        max_tokens: 4096,
+        max_tokens: 8000,
         stream: true,
         messages: [
           { role: "system", content: buildSystemPrompt() },
