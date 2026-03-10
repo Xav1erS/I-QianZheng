@@ -68,6 +68,30 @@ export default function ReportContent({
             </code>
           ),
           // 支持 GFM 任务列表
+          table: ({ children }) => (
+            <div className="overflow-x-auto my-4">
+              <table className="w-full text-sm border-collapse rounded-xl overflow-hidden shadow-sm">
+                {children}
+              </table>
+            </div>
+          ),
+          thead: ({ children }) => (
+            <thead className="bg-primary-50 text-primary-800">{children}</thead>
+          ),
+          tbody: ({ children }) => (
+            <tbody className="divide-y divide-gray-100">{children}</tbody>
+          ),
+          tr: ({ children }) => (
+            <tr className="hover:bg-gray-50 transition-colors">{children}</tr>
+          ),
+          th: ({ children }) => (
+            <th className="px-4 py-2.5 text-left font-semibold whitespace-nowrap border-b border-primary-100">
+              {children}
+            </th>
+          ),
+          td: ({ children }) => (
+            <td className="px-4 py-2.5 text-gray-700 align-top">{children}</td>
+          ),
           input: ({ type, checked }) =>
             type === "checkbox" ? (
               <input
