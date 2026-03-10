@@ -61,8 +61,8 @@ export default function ReportTOC({ content }: { content: string }) {
   if (headings.length === 0) return null;
 
   return (
-    <div className="sticky top-24">
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+    <div className="sticky top-[80px]">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 max-h-[calc(100vh-100px)] overflow-y-auto">
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">
           目录
         </p>

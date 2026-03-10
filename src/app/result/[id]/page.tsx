@@ -142,7 +142,7 @@ export default function ResultPage() {
 
       {/* 页面 header */}
       <div className="no-print bg-white border-b border-gray-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
               <Link

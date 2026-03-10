@@ -114,7 +114,7 @@ export default function Navbar() {
                     }`}
                   />
                   剩余{" "}
-                  <span className={credits === 0 ? "text-red-700" : "text-emerald-900"}>{credits}</span> 次
+                  <span className={credits === 0 ? "text-red-700" : "text-emerald-900"}>{credits}</span> 积分
                 </div>
               )}
               <button
@@ -170,7 +170,7 @@ export default function Navbar() {
             <>
               {credits !== null && (
                 <div className={`text-sm px-3 py-2.5 rounded-lg ${credits === 0 ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-700"}`}>
-                  剩余积分：<span className="font-bold">{credits}</span> 次
+                  剩余积分：<span className="font-bold">{credits}</span>
                 </div>
               )}
               {!isOnWizard && (
@@ -194,7 +194,7 @@ export default function Navbar() {
                 登录
               </Link>
               <Link href="/auth/login?mode=signup" className="block py-2.5 px-3 rounded-lg bg-primary-600 text-white hover:bg-primary-700 font-semibold transition text-sm">
-                免费注册（赠 10 次）
+                免费注册（赠 10 积分）
               </Link>
             </>
           )}

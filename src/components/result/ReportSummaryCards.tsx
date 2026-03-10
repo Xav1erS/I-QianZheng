@@ -5,6 +5,9 @@ interface Props {
 }
 
 function parseMetrics(content: string) {
+  // 去除 Markdown 加粗标记，避免 **文字** 干扰 regex 匹配
+  const clean = content.replace(/\*\*/g, "");
+
   // 推荐签证路径：匹配"推荐签证"或"首选"或"路径一"后的签证名
   let recommendedVisa = "分析中…";
   const visaPatterns = [
@@ -12,12 +15,11 @@ function parseMetrics(content: string) {
     /推荐签证[路径]*[：:]\s*([^\n]{4,40})/,
     /路径一[（(（][^）)）]+[）)）]?[：:]?\s*([^\n]{4,40})/,
     /###\s*路径一[^：:]*[：:]\s*([^\n]{4,40})/,
-    /\*\*首选[推荐]*\*\*[：:]\s*([^\n]{4,40})/,
   ];
   for (const pattern of visaPatterns) {
-    const m = content.match(pattern);
+    const m = clean.match(pattern);
     if (m) {
-      recommendedVisa = m[1].replace(/\*\*/g, "").trim().slice(0, 20);
+      recommendedVisa = m[1].trim().slice(0, 20);
       break;
     }
   }
@@ -25,14 +27,14 @@ function parseMetrics(content: string) {
   // 可行性：优先匹配"可行性评估：高/中/低"，否则从匹配度百分比推导
   let feasibility = "—";
   let feasibilityColor = "text-gray-500";
-  const feasMatch = content.match(/可行性[评估]*[：:]\s*(高|中|低|较高|较低|一般)/);
+  const feasMatch = clean.match(/可行性[评估]*[：:]\s*(高|中|低|较高|较低|一般)/);
   if (feasMatch) {
     feasibility = feasMatch[1];
     if (feasibility.includes("高")) feasibilityColor = "text-green-500";
     else if (feasibility.includes("低")) feasibilityColor = "text-red-400";
     else feasibilityColor = "text-yellow-500";
   } else {
-    const matches = Array.from(content.matchAll(/匹配度[：:]\s*(\d+)%/g));
+    const matches = Array.from(clean.matchAll(/匹配度[：:]\s*(\d+)%/g));
     if (matches.length > 0) {
       const maxPct = Math.max(...matches.map((m) => parseInt(m[1], 10)));
       if (maxPct >= 80) { feasibility = "高"; feasibilityColor = "text-green-500"; }
@@ -48,7 +50,7 @@ function parseMetrics(content: string) {
   const adviceCount = (content.match(/^\d+\.\s+/gm) || []).length;
 
   // 推荐路径数量
-  const pathCount = (content.match(/###\s*路径[一二三四五]/g) || content.match(/路径\d+/g) || []).length;
+  const pathCount = (clean.match(/###\s*路径[一二三四五]/g) || clean.match(/路径\d+/g) || []).length;
 
   return { recommendedVisa, feasibility, feasibilityColor, materialCount, adviceCount, pathCount };
 }
